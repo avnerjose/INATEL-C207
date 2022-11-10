@@ -1,0 +1,105 @@
+DROP DATABASE IF EXISTS EmpresaCAP4; 
+
+CREATE DATABASE EmpresaCAP4; 
+
+USE EmpresaCAP4; 
+
+CREATE TABLE Empregado(
+	PNome VARCHAR(15) NOT NULL,
+    MINIMAL CHAR,
+    UNOME VARCHAR(15) NOT NULL,
+    SSN BIGINT NOT NULL,
+    DATANASC DATE,
+    ENDERECO VARCHAR(80),
+    SEXO BIT,
+    SALARIO DECIMAL(10,2),
+    SSN_SUPERVISOR BIGINT,
+    DNUMERO_DEPARTAMENTO INTEGER NOT NULL DEFAULT 1,
+    
+    PRIMARY KEY(SSN),
+    
+    CONSTRAINT fk1
+    FOREIGN KEY (SSN_SUPERVISOR) REFERENCES Empregado(SSN)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    
+	CONSTRAINT fk2
+	FOREIGN KEY (DNUMERO_DEPARTAMENTO) REFERENCES Departamento(DNumero) 
+    ON DELETE CASCADE
+    ON UPDATE CASCADE 
+); 
+
+CREATE TABLE Departamento(
+	DNome VARCHAR(30) NOT NULL,
+    DNumero INTEGER NOT NULL,
+	SSN_Empregado BIGINT DEFAULT 1,
+    DataInicio DATE, 
+    
+    PRIMARY KEY(DNome,DNumero),
+    
+    CONSTRAINT fk3
+    FOREIGN KEY (SSN_Empregado) REFERENCES Empregado(SSN)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE 
+);
+
+CREATE TABLE Projeto(
+	PNome VARCHAR(30) NOT NULL,
+    PNumero INTEGER NOT NULL,
+    PLocalizacao VARCHAR(30),
+    DNumero_Departamento INTEGER DEFAULT 1,
+    
+    PRIMARY KEY(PNome,PNumero),
+    
+    CONSTRAINT fk4
+    FOREIGN KEY(DNumero_Departamento) REFERENCES Departamento(DNumero)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE DEPENDENTE(
+	SSN_Empregado BIGINT NOT NULL,
+    Nome_Dependente VARCHAR(50) NOT NULL,
+    SEXO BIT,
+    DataNasc DATE,
+    Parentesco VARCHAR(50), 
+    
+    PRIMARY KEY(SSN_Empregado,Nome_Dependente), 
+    
+    CONSTRAINT fk5
+    FOREIGN KEY(SSN_Empregado) REFERENCES Empregado(SSN)
+	ON DELETE SET NULL 
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE Depto_Localizacoes(
+	LNumero INTEGER NOT NULL,
+    DLocalizacao VARCHAR(30),
+    DNumero_Departamento INTEGER,
+    
+    PRIMARY KEY(LNumero),
+    
+	CONSTRAINT fk6
+    FOREIGN KEY(DNumero_Departamento) REFERENCES Departamento(DNumero)
+    ON DELETE SET NULL 
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE Trabalha_Em(
+	SSN_Empregado BIGINT NOT NULL,
+    PNumero_Projeto INTEGER NOT NULL,
+    Horas INTEGER,
+    
+    PRIMARY KEY(SSN_Empregado, PNumero_Projeto), 
+    
+    CONSTRAINT fk7
+    FOREIGN KEY (SSN_Empregado) REFERENCES Empregado(SSN)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+    
+    CONSTRAINT fk8
+    FOREIGN KEY (PNumero_Projeto) REFERENCES PROJETO(PNumero)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE 
+);
+
